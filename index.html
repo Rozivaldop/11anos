@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 Anos de Nós Dois ❤️</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body {
+    background: radial-gradient(circle at center, #3b1236 0%, #120614 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* CANVAS DE CORAÇÕES FLUTUANTES AO FUNDO */
+  #coracoes-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* BOTÕES FLUTUANTES SUPERIORES (TELA CHEIA E SOM) */
+  .btn-flutuante {
+    position: fixed;
+    top: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    z-index: 200;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+  }
+  .btn-flutuante:hover { background: rgba(255, 117, 140, 0.35); }
+  #btn-tela-cheia { left: 25px; }
+  #btn-som { right: 25px; display: none; }
+
+  /* ================= TELA 0: CAPA DE BOAS-VINDAS (TV) ================= */
+  #tela-capa {
+    position: relative;
+    z-index: 10;
+    max-width: 850px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 117, 140, 0.45);
+    border-radius: 30px;
+    padding: 45px 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    animation: fadeIn 0.8s ease;
+  }
+  .badge-ano {
+    display: inline-block;
+    background: rgba(255, 209, 102, 0.15);
+    border: 1px solid #ffd166;
+    color: #ffd166;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  /* Título com brilho metálico animado */
+  #tela-capa h1 {
+    font-size: 3.2rem;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #ff758c 0%, #ffd166 50%, #ff758c 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: brilhoTitulo 4s linear infinite;
+    filter: drop-shadow(0 4px 16px rgba(255, 117, 140, 0.35));
+  }
+  #tela-capa p.intro {
+    font-size: 1.3rem;
+    color: #e0c3fc;
+    margin-bottom: 30px;
+  }
+
+  /* Contador em tempo real */
+  .contador-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 35px;
+  }
+  .tempo-box {
+    background: rgba(0, 0, 0, 0.38);
+    border: 1px solid rgba(255, 117, 140, 0.3);
+    border-radius: 18px;
+    padding: 18px 10px;
+  }
+  .tempo-numero {
+    display: block;
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: #ffd166;
+  }
+  .tempo-label {
+    font-size: 0.95rem;
+    color: #f8e8ee;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ================= ÁREA DO JOGO (WIDESCREEN TV) ================= */
+  #area-jogo {
+    position: relative;
+    z-index: 10;
+    display: none;
+    width: 100%;
+    max-width: 960px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .topo { width: 100%; margin-bottom: 18px; }
+  .sub-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.15rem;
+    color: #e0c3fc;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  .badge-sintonia {
+    background: rgba(255, 209, 102, 0.15);
+    border: 1px solid rgba(255, 209, 102, 0.6);
+    color: #ffd166;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 1rem;
+  }
+  .barra-fundo {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .barra-progresso {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff758c, #ffd166);
+    transition: width 0.5s ease;
+  }
+
+  .fase-container {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.5s ease;
+  }
+  .fase-container.ativa { display: block; }
+
+  /* FASE 1: JOGO DA MEMÓRIA */
+  #mensagem-par {
+    min-height: 54px;
+    background: rgba(255, 117, 140, 0.2);
+    border: 1px solid rgba(255, 117, 140, 0.6);
+    border-radius: 16px;
+    padding: 12px 24px;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    color: #ffe3e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .tabuleiro {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+    perspective: 1000px;
+  }
+  .carta {
+    aspect-ratio: 4 / 3;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    cursor: pointer;
+  }
+  .carta.virada { transform: rotateY(180deg); }
+  .frente, .verso {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  }
+  .verso {
+    background: linear-gradient(135deg, #ff758c, #c94b7c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  .frente {
+    transform: rotateY(180deg);
+    overflow: hidden;
+    border: 3px solid #ffd166;
+  }
+  .frente img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* FASE 2: QUIZ DO CASAL */
+  .card-quiz {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 117, 140, 0.45);
+    border-radius: 26px;
+    padding: 40px 35px;
+    max-width: 760px;
+    margin: 0 auto;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+  }
+  .pergunta-numero { color: #ffd166; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .pergunta-texto { font-size: 1.75rem; font-weight: bold; margin-bottom: 28px; color: #fff; }
+  .opcoes-lista { display: flex; flex-direction: column; gap: 15px; }
+  .opcao-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 18px 24px;
+    border-radius: 16px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .opcao-btn:hover { background: rgba(255, 117, 140, 0.3); border-color: #ff758c; transform: translateX(6px); }
+  .opcao-btn.correta { background: #2ec4b6; border-color: #2ec4b6; color: #0b2522; font-weight: bold; }
+  .opcao-btn.errada { background: #e63946; border-color: #e63946; }
+  #feedback-quiz { margin-top: 20px; min-height: 28px; color: #ffd166; font-size: 1.2rem; }
+
+  /* FASE 3: COFRE SECRETO + TECLADO VIRTUAL NA TELA */
+  .card-cofre {
+    background: linear-gradient(145deg, rgba(39,14,43,0.92), rgba(61,20,56,0.92));
+    border: 2px solid #ffd166;
+    border-radius: 26px;
+    padding: 30px 30px;
+    max-width: 780px;
+    margin: 0 auto;
+    box-shadow: 0 15px 45px rgba(255, 209, 102, 0.25);
+    backdrop-filter: blur(6px);
+  }
+  .icone-cadeado { font-size: 3.4rem; margin-bottom: 6px; }
+  .dica-cofre {
+    background: rgba(255, 209, 102, 0.12);
+    border-left: 5px solid #ffd166;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin: 14px 0;
+    color: #ffe8a3;
+    font-size: 1.1rem;
+  }
+  .input-senha {
+    width: 100%;
+    max-width: 360px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 2px solid #ff758c;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffd166;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 14px;
+    outline: none;
+  }
+  .input-senha:focus { border-color: #ffd166; }
+
+  /* Teclado Virtual para usar com o mouse na TV */
+  .teclado-virtual {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 auto 18px auto;
+    max-width: 660px;
+  }
+  .linha-teclado {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tecla-btn {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: bold;
+    padding: 11px 15px;
+    min-width: 46px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tecla-btn:hover {
+    background: rgba(255, 117, 140, 0.45);
+    border-color: #ff758c;
+    transform: translateY(-2px);
+  }
+  .tecla-btn:active { transform: scale(0.95); }
+  .tecla-acao {
+    background: rgba(255, 209, 102, 0.2);
+    border-color: #ffd166;
+    color: #ffd166;
+    padding: 11px 18px;
+  }
+
+  #erro-cofre { color: #ff758c; margin-top: 10px; min-height: 24px; font-size: 1.1rem; }
+
+  /* BOTÕES E MODAIS */
+  .btn-principal {
+    background: linear-gradient(90deg, #ff758c, #ff5270);
+    color: white;
+    border: none;
+    padding: 15px 34px;
+    font-size: 1.15rem;
+    border-radius: 35px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(255, 82, 112, 0.45);
+    transition: transform 0.2s;
+  }
+  .btn-principal:hover { transform: scale(1.05); }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 4, 18, 0.92);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    backdrop-filter: blur(5px);
+    overflow-y: auto;
+  }
+  .overlay.ativo { display: flex; }
+
+  /* MODAL DE ZOOM DA FOTO AO ACERTAR PAR */
+  .card-zoom {
+    background: linear-gradient(145deg, #2b102f, #46173e);
+    border: 3px solid #ffd166;
+    border-radius: 26px;
+    padding: 24px;
+    max-width: 580px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(255, 209, 102, 0.35);
+    animation: zoomSuave 0.4s ease;
+  }
+  .card-zoom img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    margin-bottom: 16px;
+  }
+  .card-zoom p {
+    font-size: 1.35rem;
+    color: #ffe3e8;
+    font-weight: bold;
+  }
+
+  .card-modal {
+    position: relative;
+    background: linear-gradient(145deg, #2b102f, #46173e);
+    border: 2px solid #ff758c;
+    border-radius: 26px;
+    padding: 24px 26px;
+    max-width: 780px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(255, 117, 140, 0.4);
+    z-index: 102;
+    animation: fadeIn 0.5s ease;
+  }
+  .card-modal h2 { color: #ffd166; font-size: 1.85rem; margin-bottom: 8px; }
+  .card-modal p { font-size: 1.08rem; line-height: 1.5; color: #f8e8ee; margin-bottom: 12px; }
+
+  .selo-final-sintonia {
+    display: inline-block;
+    background: rgba(46, 196, 182, 0.2);
+    border: 1px solid #2ec4b6;
+    color: #7bf1e6;
+    padding: 4px 15px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .foto-premio {
+    width: 100%;
+    max-height: 185px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 3px solid #ffd166;
+    margin-bottom: 12px;
+  }
+
+  /* Texto da carta digitada ao vivo */
+  #texto-carta-final {
+    min-height: 64px;
+    font-size: 1.08rem;
+    line-height: 1.5;
+    color: #ffe8f0;
+    margin-bottom: 14px;
+  }
+  .cursor-digitando::after {
+    content: '|';
+    animation: piscar 0.7s infinite;
+    color: #ffd166;
+  }
+
+  .voucher {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.7s ease;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px dashed #ffd166;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .voucher.visivel {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .voucher span.tag-voucher { display: block; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 2px; color: #ffd166; margin-bottom: 4px; }
+  .voucher strong.titulo-voucher { font-size: 1.22rem; color: #fff; display: block; margin-bottom: 10px; }
+
+  /* Grid dos 4 Restaurantes */
+  .restaurantes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .btn-restaurante {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 209, 102, 0.5);
+    color: #fff;
+    padding: 11px 12px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-restaurante:hover {
+    background: rgba(255, 209, 102, 0.28);
+    border-color: #ffd166;
+    transform: scale(1.03);
+  }
+  .btn-restaurante.escolhido {
+    background: #2ec4b6;
+    border-color: #2ec4b6;
+    color: #0b2522;
+    box-shadow: 0 0 18px rgba(46, 196, 182, 0.6);
+  }
+
+  #confirmacao-restaurante {
+    margin-top: 10px;
+    font-size: 1.05rem;
+    color: #7bf1e6;
+    font-weight: bold;
+  }
+
+  /* Box do QR Code + WhatsApp após escolher o restaurante */
+  #box-whatsapp {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    animation: fadeIn 0.5s ease;
+  }
+  #box-whatsapp.ativo { display: flex; }
+  #qr-zap {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    border: 6px solid #fff;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .zap-info {
+    text-align: left;
+    max-width: 400px;
+  }
+  .zap-info p {
+    font-size: 0.98rem !important;
+    margin-bottom: 10px !important;
+    color: #e0c3fc !important;
+  }
+  .btn-zap {
+    display: inline-block;
+    background: #25D366;
+    color: #092c16;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 22px;
+    font-size: 1rem;
+    transition: transform 0.2s;
+  }
+  .btn-zap:hover { transform: scale(1.05); }
+
+  /* Confetes atrás do modal para não cobrir o QR Code */
+  #confetes { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes zoomSuave {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes piscar {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  @keyframes brilhoTitulo {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- CANVAS DOS CORAÇÕES FLUTUANTES AO FUNDO -->
+  <canvas id="coracoes-bg"></canvas>
+
+  <!-- ÁUDIO DE FUNDO (COLOQUE O ARQUIVO musica.mp3 NA MESMA PASTA) -->
+  <audio id="musica-fundo" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="btn-tela-cheia" class="btn-flutuante" onclick="alternarTelaCheia()">⛶ Tela Cheia</button>
+  <button id="btn-som" class="btn-flutuante" onclick="alternarMusica()">🔊 Música: Ligada</button>
+  <canvas id="confetes"></canvas>
+
+  <!-- ================= TELA 0: CAPA DE BOAS-VINDAS ================= -->
+  <div id="tela-capa">
+    <div class="badge-ano">17 de Novembro • Edição Especial</div>
+    <h1>11 Anos de Nós Dois ❤️</h1>
+    <p class="intro">Preparei uma missão especial para comemorar cada segundo da nossa história:</p>
+
+    <div class="contador-grid">
+      <div class="tempo-box">
+        <span class="tempo-numero" id="dias">4018</span>
+        <span class="tempo-label">Dias</span>
+      </div>
+      <div class="tempo-box">
+        <span class="tempo-numero" id="horas">00</span>
+        <span class="tempo-label">Horas</span>
+      </div>
+      <div class="tempo-box">
+        <span class="tempo-numero" id="minutos">00</span>
+        <span class="tempo-label">Minutos</span>
+      </div>
+      <div class="tempo-box">
+        <span class="tempo-numero" id="segundos">00</span>
+        <span class="tempo-label">Segundos</span>
+      </div>
+    </div>
+
+    <button class="btn-principal" onclick="iniciarMissao()">Começar Missão ❤️▶</button>
+  </div>
+
+  <!-- ================= ÁREA DO JOGO ================= -->
+  <div id="area-jogo">
+    <div class="topo">
+      <div class="sub-topo">
+        <span id="label-fase">Fase 1 de 3: Memórias</span>
+        <span class="badge-sintonia" id="label-sintonia">💛 Sintonia: 100%</span>
+        <span id="label-progresso">0% concluído</span>
+      </div>
+      <div class="barra-fundo">
+        <div class="barra-progresso" id="barra-progresso"></div>
+      </div>
+    </div>
+
+    <!-- FASE 1: JOGO DA MEMÓRIA -->
+    <div class="fase-container ativa" id="fase-1">
+      <div id="mensagem-par">Encontre os 6 pares de fotos para liberar a Fase 2!</div>
+      <div class="tabuleiro" id="tabuleiro"></div>
+    </div>
+
+    <!-- FASE 2: QUIZ DO CASAL -->
+    <div class="fase-container" id="fase-2">
+      <div class="card-quiz">
+        <div class="pergunta-numero" id="quiz-numero">Pergunta 1 de 4</div>
+        <div class="pergunta-texto" id="quiz-pergunta">Carregando pergunta...</div>
+        <div class="opcoes-lista" id="quiz-opcoes"></div>
+        <div id="feedback-quiz"></div>
+      </div>
+    </div>
+
+    <!-- FASE 3: COFRE SECRETO + TECLADO NA TELA -->
+    <div class="fase-container" id="fase-3">
+      <div class="card-cofre">
+        <div class="icone-cadeado">🔐</div>
+        <h2 style="color: #ffd166; font-size: 1.9rem; margin-bottom: 6px;">Cofre dos 11 Anos</h2>
+        <p style="color: #e0c3fc; font-size: 1.1rem;">Use o teclado abaixo (ou o físico) para destrancar sua recompensa:</p>
+        
+        <div class="dica-cofre" id="texto-dica-cofre"></div>
+
+        <input type="text" id="input-senha" class="input-senha" placeholder="SENHA..." onkeypress="if(event.key==='Enter') verificarCofre()">
+        
+        <div class="teclado-virtual" id="teclado-virtual"></div>
+
+        <button class="btn-principal" onclick="verificarCofre()">Destrancar Cofre 🔓</button>
+        <div id="erro-cofre"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE ZOOM AO ACERTAR PAR -->
+  <div class="overlay" id="modal-zoom" onclick="fecharZoom()">
+    <div class="card-zoom">
+      <img id="zoom-img" src="" alt="Nosso momento">
+      <p id="zoom-frase"></p>
+    </div>
+  </div>
+
+  <!-- MODAL DE TRANSIÇÃO ENTRE FASES -->
+  <div class="overlay" id="modal-transicao">
+    <div class="card-modal">
+      <h2 id="transicao-titulo">Fase Concluída! ✨</h2>
+      <p id="transicao-texto">Você mandou muito bem!</p>
+      <button class="btn-principal" id="btn-avancar">Ir para a Próxima Fase ➡️</button>
+    </div>
+  </div>
+
+  <!-- MODAL FINAL (RECOMPENSA + ESCOLHA DO RESTAURANTE + WHATSAPP) -->
+  <div class="overlay" id="modal-final">
+    <div class="card-modal">
+      <h2>🎉 Parabéns, Meu Amor!</h2>
+      <div class="selo-final-sintonia" id="selo-sintonia-final">💛 Sintonia do Casal: 100%</div>
+      <img src="foto7.jpg" alt="Nossa foto especial" class="foto-premio">
+      
+      <div id="texto-carta-final" class="cursor-digitando"></div>
+
+      <div class="voucher" id="box-voucher">
+        <span class="tag-voucher">🎟️ Vale-Jantar Especial • Hoje após a faculdade</span>
+        <strong class="titulo-voucher">Escolha onde vamos comemorar hoje à noite:</strong>
+        
+        <div class="restaurantes-grid">
+          <button class="btn-restaurante" onclick="escolherRestaurante(this, 'Tutti Cucina')">🍝 Tutti Cucina</button>
+          <button class="btn-restaurante" onclick="escolherRestaurante(this, 'Gennarí Cucina Italiana')">🍷 Gennarí Cucina Italiana</button>
+          <button class="btn-restaurante" onclick="escolherRestaurante(this, 'Piazzale Italia')">🇮🇹 Piazzale Italia</button>
+          <button class="btn-restaurante" onclick="escolherRestaurante(this, 'Mazzano Restaurante e Pizzaria')">🍕 Mazzano Restaurante e Pizzaria</button>
+        </div>
+
+        <div id="confirmacao-restaurante"></div>
+
+        <!-- QR Code + Botão WhatsApp para avisar você na faculdade -->
+        <div id="box-whatsapp">
+          <img id="qr-zap" src="" alt="QR Code WhatsApp">
+          <div class="zap-info">
+            <p>📱 Aponte a câmera do celular para o QR Code ao lado (ou clique no botão) para me avisar no WhatsApp:</p>
+            <a id="link-zap" href="#" target="_blank" class="btn-zap">📲 Enviar Escolha no WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-principal" onclick="location.reload()">Jogar Novamente 🔄</button>
+    </div>
+  </div>
+
+<script>
+  // =========================================================================
+  // 1. CONFIGURAÇÕES PERSONALIZÁVEIS
+  // =========================================================================
+  const DATA_INICIO = new Date('2015-11-17T00:00:00');
+
+  // COLOQUE AQUI O SEU WHATSAPP (55 + DDD + NÚMERO, APENAS NÚMEROS)
+  const SEU_WHATSAPP = '5584999369788';
+
+  const paresFotos = [
+    { img: 'foto1.png', frase: '❤️ O sorriso que ilumina todos os meus dias!' },
+    { img: 'foto2.png', frase: '✨ Com você, qualquer lugar vira o melhor lugar do mundo.' },
+    { img: 'foto3.png', frase: '🥰 11 anos e eu ainda me apaixono por você todos os dias.' },
+    { img: 'foto4.png', frase: '🌟 Minha melhor companhia para todas as aventuras!' },
+    { img: 'foto5.png', frase: '💖 Obrigado por ser meu porto seguro em todos os momentos.' },
+    { img: 'foto6.png', frase: '🥂 Que venham mais 11, 20, 50 anos ao seu lado!' }
+  ];
+
+  const perguntasQuiz = [
+    {
+      pergunta: 'Em que ano essa nossa história incrível começou?',
+      opcoes: ['2014', '2015', '2016'],
+      correta: 1,
+      dicaErro: 'Ops! Faz as contas: 2026 menos 11 anos... 😉'
+    },
+    {
+      pergunta: 'O que nunca pode faltar quando saímos para comer juntos?',
+      opcoes: ['Sobremesa no final', 'Pedir a mesma coisa de sempre', 'Ficar horas conversando'],
+      correta: 0,
+      dicaErro: 'Quase! Tenta outra opção aí, amor!'
+    },
+    {
+      pergunta: 'Qual é o meu maior vício nesses 11 anos?',
+      opcoes: ['Mexer no celular', 'Parmegiana', 'Dormir tarde'],
+      correta: 1,
+      dicaErro: 'Ei! Essa tá fácil demais, olha bem as opções! 😋'
+    },
+    {
+      pergunta: 'O que vamos fazer hoje assim que eu voltar da faculdade?',
+      opcoes: ['Ficar vendo TV', 'Dormir cedo', 'Sair para um jantar especial de 11 anos!'],
+      correta: 2,
+      dicaErro: 'Hoje é dia de comemorar! Escolhe a última! 🥂'
+    }
+  ];
+
+  const SENHA_COFRE = 'novembro';
+  const DICA_COFRE = '💡 <strong>Dica:</strong> O mês em que começamos a namorar (escreva por extenso).';
+  const CARTA_FINAL = '11 anos juntos e você continua gabaritando tudo sobre nós! Obrigado por ser minha parceira de vida, minha melhor amiga e o meu grande amor. Que essa seja apenas mais uma de muitas datas incríveis ao seu lado.';
+
+
+  // ---------------- BOTÃO DE TELA CHEIA (TV) ----------------
+  function alternarTelaCheia() {
+    const btn = document.getElementById('btn-tela-cheia');
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        btn.textContent = '⛶ Sair da Tela Cheia';
+      }).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => {
+        btn.textContent = '⛶ Tela Cheia';
+      }).catch(() => {});
+    }
+  }
+
+
+  // ---------------- PARTÍCULAS DE CORAÇÕES FLUTUANTES AO FUNDO ----------------
+  const bgCanvas = document.getElementById('coracoes-bg');
+  const bgCtx = bgCanvas.getContext('2d');
+  let coracoes = [];
+
+  function iniciarCoracoesFundo() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+    coracoes = Array.from({ length: 28 }, () => ({
+      x: Math.random() * bgCanvas.width,
+      y: Math.random() * bgCanvas.height,
+      size: Math.random() * 18 + 10,
+      speed: Math.random() * 0.8 + 0.4,
+      opacity: Math.random() * 0.25 + 0.08,
+      drift: Math.random() * Math.PI * 2
+    }));
+    animarCoracoesFundo();
+  }
+
+  function animarCoracoesFundo() {
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    coracoes.forEach(c => {
+      bgCtx.save();
+      bgCtx.globalAlpha = c.opacity;
+      bgCtx.font = `${c.size}px sans-serif`;
+      bgCtx.fillText('❤️', c.x + Math.sin(c.drift) * 15, c.y);
+      bgCtx.restore();
+
+      c.y -= c.speed;
+      c.drift += 0.015;
+      if (c.y < -30) {
+        c.y = bgCanvas.height + 30;
+        c.x = Math.random() * bgCanvas.width;
+      }
+    });
+    requestAnimationFrame(animarCoracoesFundo);
+  }
+  window.addEventListener('resize', () => {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+  });
+  iniciarCoracoesFundo();
+
+
+  // ---------------- EFEITOS SONOROS SINTETIZADOS (WEB AUDIO API) ----------------
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function tocarSom(tipo) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const agora = audioCtx.currentTime;
+
+    if (tipo === 'virar') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, agora);
+      gain.gain.setValueAtTime(0.1, agora);
+      gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.12);
+      osc.start(agora);
+      osc.stop(agora + 0.12);
+    } else if (tipo === 'acerto') {
+      const melodia = [
+        { freq: 523.25, tempo: 0,    dur: 0.25 },
+        { freq: 659.25, tempo: 0.13, dur: 0.25 },
+        { freq: 783.99, tempo: 0.26, dur: 0.25 },
+        { freq: 1046.50, tempo: 0.39, dur: 0.55 }
+      ];
+      melodia.forEach(nota => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.frequency.setValueAtTime(nota.freq, agora + nota.tempo);
+        g.gain.setValueAtTime(0.18, agora + nota.tempo);
+        g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.dur);
+        o.start(agora + nota.tempo);
+        o.stop(agora + nota.tempo + nota.dur);
+      });
+    } else if (tipo === 'erro') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, agora);
+      osc.frequency.linearRampToValueAtTime(150, agora + 0.25);
+      gain.gain.setValueAtTime(0.1, agora);
+      gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.25);
+      osc.start(agora);
+      osc.stop(agora + 0.25);
+    } else if (tipo === 'vitoria') {
+      const notas = [523.25, 659.25, 783.99, 1046.50];
+      notas.forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'triangle';
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.frequency.setValueAtTime(freq, agora + i * 0.14);
+        g.gain.setValueAtTime(0.18, agora + i * 0.14);
+        g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.14 + 0.5);
+        o.start(agora + i * 0.14);
+        o.stop(agora + i * 0.14 + 0.5);
+      });
+    }
+  }
+
+
+  // ---------------- CONTADOR AO VIVO ----------------
+  function atualizarContador() {
+    const agora = new Date();
+    const diff = agora - DATA_INICIO;
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((diff / 1000 / 60) % 60);
+    const segundos = Math.floor((diff / 1000) % 60);
+
+    document.getElementById('dias').textContent = dias;
+    document.getElementById('horas').textContent = String(horas).padStart(2, '0');
+    document.getElementById('minutos').textContent = String(minutos).padStart(2, '0');
+    document.getElementById('segundos').textContent = String(segundos).padStart(2, '0');
+  }
+  setInterval(atualizarContador, 1000);
+  atualizarContador();
+
+
+  // ---------------- CONTROLE DA MÚSICA E INÍCIO ----------------
+  const musica = document.getElementById('musica-fundo');
+  const btnSom = document.getElementById('btn-som');
+  let musicaTocando = false;
+
+  function iniciarMissao() {
+    tocarSom('acerto');
+    musica.volume = 0.35;
+    musica.play().then(() => {
+      musicaTocando = true;
+      btnSom.style.display = 'block';
+    }).catch(() => {
+      btnSom.style.display = 'none';
+    });
+
+    document.getElementById('tela-capa').style.display = 'none';
+    document.getElementById('area-jogo').style.display = 'flex';
+    iniciarFase1();
+    montarTecladoVirtual();
+  }
+
+  function alternarMusica() {
+    if (musicaTocando) {
+      musica.pause();
+      btnSom.textContent = '🔇 Música: Pausada';
+      musicaTocando = false;
+    } else {
+      musica.play();
+      btnSom.textContent = '🔊 Música: Ligada';
+      musicaTocando = true;
+    }
+  }
+
+
+  // ---------------- LÓGICA DAS 3 FASES + SINTONIA ----------------
+  document.getElementById('texto-dica-cofre').innerHTML = DICA_COFRE;
+  const barra = document.getElementById('barra-progresso');
+  const labelProgresso = document.getElementById('label-progresso');
+  const labelFase = document.getElementById('label-fase');
+  let sintonia = 100;
+
+  function atualizarBarra(porcentagem) {
+    barra.style.width = porcentagem + '%';
+    labelProgresso.textContent = Math.round(porcentagem) + '% concluído';
+  }
+
+  function reduzirSintonia(pontos) {
+    sintonia = Math.max(75, sintonia - pontos);
+    document.getElementById('label-sintonia').textContent = `💛 Sintonia: ${sintonia}%`;
+  }
+
+  // FASE 1 + ZOOM AUTOMÁTICO NO PAR ENCONTRADO
+  let primeiraCarta = null, segundaCarta = null, bloqueado = false, paresAchados = 0;
+  let timerZoom = null;
+  const tabuleiro = document.getElementById('tabuleiro');
+
+  function iniciarFase1() {
+    const cartas = [...paresFotos, ...paresFotos].sort(() => Math.random() - 0.5);
+    cartas.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'carta';
+      el.dataset.img = item.img;
+      el.dataset.frase = item.frase;
+      el.innerHTML = `<div class="verso">❤️</div><div class="frente"><img src="${item.img}"></div>`;
+      el.onclick = () => virarCarta(el);
+      tabuleiro.appendChild(el);
+    });
+  }
+
+  function mostrarZoomPar(imgSrc, frase, callbackFim) {
+    const modalZoom = document.getElementById('modal-zoom');
+    document.getElementById('zoom-img').src = imgSrc;
+    document.getElementById('zoom-frase').textContent = frase;
+    modalZoom.classList.add('ativo');
+
+    clearTimeout(timerZoom);
+    timerZoom = setTimeout(() => {
+      modalZoom.classList.remove('ativo');
+      if (callbackFim) callbackFim();
+    }, 2300);
+  }
+
+  function fecharZoom() {
+    document.getElementById('modal-zoom').classList.remove('ativo');
+  }
+
+  function virarCarta(carta) {
+    if (bloqueado || carta === primeiraCarta || carta.classList.contains('virada')) return;
+    tocarSom('virar');
+    carta.classList.add('virada');
+    if (!primeiraCarta) { primeiraCarta = carta; return; }
+    segundaCarta = carta;
+
+    if (primeiraCarta.dataset.img === segundaCarta.dataset.img) {
+      tocarSom('acerto');
+      const imgEncontrada = primeiraCarta.dataset.img;
+      const fraseEncontrada = primeiraCarta.dataset.frase;
+      document.getElementById('mensagem-par').textContent = fraseEncontrada;
+      paresAchados++;
+      atualizarBarra((paresAchados / paresFotos.length) * 40);
+      [primeiraCarta, segundaCarta] = [null, null];
+
+      const concluiuFase1 = (paresAchados === paresFotos.length);
+
+      setTimeout(() => {
+        mostrarZoomPar(imgEncontrada, fraseEncontrada, () => {
+          if (concluiuFase1) {
+            mostrarTransicao(
+              'Fase 1 Concluída! 📸',
+              'Você mandou bem nas nossas fotos! Agora vamos para a Fase 2: o Quiz do Casal.',
+              () => {
+                document.getElementById('fase-1').classList.remove('ativa');
+                document.getElementById('fase-2').classList.add('ativa');
+                labelFase.textContent = 'Fase 2 de 3: Quiz do Casal';
+                carregarPergunta();
+              }
+            );
+          }
+        });
+      }, 450);
+
+    } else {
+      bloqueado = true;
+      setTimeout(() => {
+        primeiraCarta.classList.remove('virada');
+        segundaCarta.classList.remove('virada');
+        [primeiraCarta, segundaCarta, bloqueado] = [null, null, false];
+      }, 850);
+    }
+  }
+
+  // FASE 2
+  let indicePergunta = 0;
+
+  function carregarPergunta() {
+    const q = perguntasQuiz[indicePergunta];
+    document.getElementById('quiz-numero').textContent = `Pergunta ${indicePergunta + 1} de ${perguntasQuiz.length}`;
+    document.getElementById('quiz-pergunta').textContent = q.pergunta;
+    document.getElementById('feedback-quiz').textContent = '';
+
+    const opcoesDiv = document.getElementById('quiz-opcoes');
+    opcoesDiv.innerHTML = '';
+
+    q.opcoes.forEach((texto, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'opcao-btn';
+      btn.textContent = texto;
+      btn.onclick = () => responderQuiz(btn, idx === q.correta, q.dicaErro);
+      opcoesDiv.appendChild(btn);
+    });
+  }
+
+  function responderQuiz(botao, acertou, dicaErro) {
+    if (acertou) {
+      tocarSom('acerto');
+      botao.classList.add('correta');
+      document.getElementById('feedback-quiz').textContent = '✅ Acertou em cheio!';
+      indicePergunta++;
+      atualizarBarra(40 + (indicePergunta / perguntasQuiz.length) * 40);
+
+      setTimeout(() => {
+        if (indicePergunta < perguntasQuiz.length) {
+          carregarPergunta();
+        } else {
+          mostrarTransicao(
+            'Quiz Concluído! 🧠❤️',
+            'Você realmente conhece tudo sobre nós dois! Só falta abrir o Cofre Final.',
+            () => {
+              document.getElementById('fase-2').classList.remove('ativa');
+              document.getElementById('fase-3').classList.add('ativa');
+              labelFase.textContent = 'Fase 3 de 3: Cofre Secreto';
+            }
+          );
+        }
+      }, 900);
+    } else {
+      tocarSom('erro');
+      reduzirSintonia(4);
+      botao.classList.add('errada');
+      document.getElementById('feedback-quiz').textContent = dicaErro;
+    }
+  }
+
+  // FASE 3: TECLADO VIRTUAL + VERIFICAÇÃO DO COFRE
+  function montarTecladoVirtual() {
+    const linhas = [
+      ['Q','W','E','R','T','Y','U','I','O','P'],
+      ['A','S','D','F','G','H','J','K','L','Ç'],
+      ['Z','X','C','V','B','N','M','⌫','LIMPAR']
+    ];
+    const container = document.getElementById('teclado-virtual');
+    const input = document.getElementById('input-senha');
+
+    linhas.forEach(linha => {
+      const divLinha = document.createElement('div');
+      divLinha.className = 'linha-teclado';
+
+      linha.forEach(tecla => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = tecla;
+        btn.className = (tecla === '⌫' || tecla === 'LIMPAR') ? 'tecla-btn tecla-acao' : 'tecla-btn';
+
+        btn.onclick = () => {
+          tocarSom('virar');
+          if (tecla === '⌫') {
+            input.value = input.value.slice(0, -1);
+          } else if (tecla === 'LIMPAR') {
+            input.value = '';
+          } else {
+            input.value += tecla.toLowerCase();
+          }
+        };
+        divLinha.appendChild(btn);
+      });
+
+      container.appendChild(divLinha);
+    });
+  }
+
+  function verificarCofre() {
+    const digitado = document.getElementById('input-senha').value.trim().toLowerCase();
+    const correta = SENHA_COFRE.trim().toLowerCase();
+
+    if (digitado === correta) {
+      tocarSom('vitoria');
+      atualizarBarra(100);
+      const seloTexto = sintonia === 100
+        ? '💛 Sintonia do Casal: 100% — Gabarito Perfeito!'
+        : `💛 Sintonia do Casal: ${sintonia}% — Conexão Incrível!`;
+      document.getElementById('selo-sintonia-final').textContent = seloTexto;
+
+      document.getElementById('modal-final').classList.add('ativo');
+      iniciarConfetes();
+      escreverCartaAoVivo();
+    } else {
+      tocarSom('erro');
+      reduzirSintonia(3);
+      document.getElementById('erro-cofre').textContent = '❌ Senha incorreta! Leia a dica e tente de novo.';
+    }
+  }
+
+  // ESCOLHA DO RESTAURANTE NO VOUCHER FINAL + QR CODE WHATSAPP COM UNICODE SEGURO
+  function escolherRestaurante(botaoClicado, nomeRestaurante) {
+    tocarSom('vitoria');
+    iniciarConfetes();
+
+    document.querySelectorAll('.btn-restaurante').forEach(b => b.classList.remove('escolhido'));
+    botaoClicado.classList.add('escolhido');
+    document.getElementById('confirmacao-restaurante').textContent =
+      `✅ Escolhido: ${nomeRestaurante}! Já vai se preparando que depois da faculdade eu te busco para a gente comemorar ❤️`;
+
+    // Emojis escritos em código Unicode seguro (nunca quebram no WhatsApp)
+    const coracao = '\u2764\uFE0F';
+    const tacas = '\uD83E\uDD42';
+    const textoMensagem = `Amor, acabei de zerar a missão dos 11 anos! ${coracao} Escolhi o ${nomeRestaurante} para o nosso jantar hoje à noite ${tacas}`;
+    
+    const urlZap = `https://api.whatsapp.com/send?phone=${SEU_WHATSAPP}&text=${encodeURIComponent(textoMensagem)}`;
+
+    document.getElementById('link-zap').href = urlZap;
+    document.getElementById('qr-zap').src =
+      `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(urlZap)}`;
+    document.getElementById('box-whatsapp').classList.add('ativo');
+  }
+
+  // EFEITO MÁQUINA DE ESCREVER NA TELA FINAL
+  function escreverCartaAoVivo() {
+    const el = document.getElementById('texto-carta-final');
+    const voucher = document.getElementById('box-voucher');
+    el.textContent = '';
+    let i = 0;
+
+    const intervalo = setInterval(() => {
+      el.textContent += CARTA_FINAL.charAt(i);
+      i++;
+      if (i >= CARTA_FINAL.length) {
+        clearInterval(intervalo);
+        el.classList.remove('cursor-digitando');
+        voucher.classList.add('visivel');
+      }
+    }, 32);
+  }
+
+  function mostrarTransicao(titulo, texto, acao) {
+    const modal = document.getElementById('modal-transicao');
+    document.getElementById('transicao-titulo').textContent = titulo;
+    document.getElementById('transicao-texto').textContent = texto;
+    modal.classList.add('ativo');
+    document.getElementById('btn-avancar').onclick = () => {
+      modal.classList.remove('ativo');
+      acao();
+    };
+  }
+
+  // CONFETES
+  const canvas = document.getElementById('confetes');
+  const ctx = canvas.getContext('2d');
+  let particulas = [];
+  let confetesRodando = false;
+
+  function iniciarConfetes() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particulas = Array.from({ length: 160 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 7 + 4,
+      d: Math.random() * 120,
+      color: ['#ff758c', '#ffd166', '#ff7eb3', '#ffffff', '#2ec4b6'][Math.floor(Math.random() * 5)]
+    }));
+    if (!confetesRodando) {
+      confetesRodando = true;
+      animarConfetes();
+    }
+  }
+
+  function animarConfetes() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particulas.forEach(p => {
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.r, p.r * 1.6);
+      p.y += 2.6;
+      p.x += Math.sin(p.d) * 1.2;
+      if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+    });
+    requestAnimationFrame(animarConfetes);
+  }
+</script>
+</body>
+</html>
