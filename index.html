@@ -2,21 +2,24 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>11 Anos de Nós Dois ❤️</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+  
   body {
     background: radial-gradient(circle at center, #3b1236 0%, #120614 100%);
     color: #fff;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 25px;
+    padding: 68px 16px 24px 16px;
     text-align: center;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
   }
 
@@ -31,23 +34,23 @@
   /* BOTÕES FLUTUANTES SUPERIORES (TELA CHEIA E SOM) */
   .btn-flutuante {
     position: fixed;
-    top: 20px;
-    background: rgba(255, 255, 255, 0.12);
+    top: 14px;
+    background: rgba(255, 255, 255, 0.14);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 10px 18px;
+    padding: 8px 14px;
     border-radius: 25px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
     z-index: 200;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
     transition: background 0.2s;
   }
   .btn-flutuante:hover { background: rgba(255, 117, 140, 0.35); }
-  #btn-tela-cheia { left: 25px; }
-  #btn-som { right: 25px; display: none; }
+  #btn-tela-cheia { left: 14px; }
+  #btn-som { right: 14px; display: none; }
 
-  /* ================= TELA 0: CAPA DE BOAS-VINDAS (TV) ================= */
+  /* ================= TELA 0: CAPA DE BOAS-VINDAS (HÍBRIDA) ================= */
   #tela-capa {
     position: relative;
     z-index: 10;
@@ -55,8 +58,8 @@
     width: 100%;
     background: rgba(255, 255, 255, 0.06);
     border: 2px solid rgba(255, 117, 140, 0.45);
-    border-radius: 30px;
-    padding: 45px 40px;
+    border-radius: 26px;
+    padding: 36px 24px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(6px);
     animation: fadeIn 0.8s ease;
@@ -66,17 +69,16 @@
     background: rgba(255, 209, 102, 0.15);
     border: 1px solid #ffd166;
     color: #ffd166;
-    padding: 6px 18px;
+    padding: 5px 15px;
     border-radius: 20px;
-    font-size: 1rem;
-    letter-spacing: 2px;
+    font-size: 0.88rem;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
   }
-  /* Título com brilho metálico animado */
   #tela-capa h1 {
-    font-size: 3.2rem;
-    margin-bottom: 12px;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 10px;
     background: linear-gradient(90deg, #ff758c 0%, #ffd166 50%, #ff758c 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
@@ -85,38 +87,38 @@
     filter: drop-shadow(0 4px 16px rgba(255, 117, 140, 0.35));
   }
   #tela-capa p.intro {
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
     color: #e0c3fc;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
 
   /* Contador em tempo real */
   .contador-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-bottom: 35px;
+    gap: 10px;
+    margin-bottom: 28px;
   }
   .tempo-box {
     background: rgba(0, 0, 0, 0.38);
     border: 1px solid rgba(255, 117, 140, 0.3);
-    border-radius: 18px;
-    padding: 18px 10px;
+    border-radius: 16px;
+    padding: 14px 6px;
   }
   .tempo-numero {
     display: block;
-    font-size: 2.4rem;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
     font-weight: bold;
     color: #ffd166;
   }
   .tempo-label {
-    font-size: 0.95rem;
+    font-size: clamp(0.72rem, 1.8vw, 0.95rem);
     color: #f8e8ee;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
 
-  /* ================= ÁREA DO JOGO (WIDESCREEN TV) ================= */
+  /* ================= ÁREA DO JOGO ================= */
   #area-jogo {
     position: relative;
     z-index: 10;
@@ -127,12 +129,14 @@
     align-items: center;
   }
 
-  .topo { width: 100%; margin-bottom: 18px; }
+  .topo { width: 100%; margin-bottom: 16px; }
   .sub-topo {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.15rem;
+    gap: 8px;
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
     color: #e0c3fc;
     margin-bottom: 8px;
     font-weight: bold;
@@ -141,9 +145,9 @@
     background: rgba(255, 209, 102, 0.15);
     border: 1px solid rgba(255, 209, 102, 0.6);
     color: #ffd166;
-    padding: 4px 14px;
+    padding: 4px 12px;
     border-radius: 20px;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   .barra-fundo {
     width: 100%;
@@ -168,13 +172,13 @@
 
   /* FASE 1: JOGO DA MEMÓRIA */
   #mensagem-par {
-    min-height: 54px;
+    min-height: 50px;
     background: rgba(255, 117, 140, 0.2);
     border: 1px solid rgba(255, 117, 140, 0.6);
-    border-radius: 16px;
-    padding: 12px 24px;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
+    border-radius: 14px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
     color: #ffe3e8;
     display: flex;
     align-items: center;
@@ -184,7 +188,7 @@
   .tabuleiro {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 14px;
     max-width: 720px;
     margin: 0 auto;
     perspective: 1000px;
@@ -202,7 +206,8 @@
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    border-radius: 16px;
+    -webkit-backface-visibility: hidden;
+    border-radius: 14px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.5);
   }
   .verso {
@@ -210,7 +215,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
     border: 2px solid rgba(255,255,255,0.3);
   }
   .frente {
@@ -224,56 +229,56 @@
   .card-quiz {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(255, 117, 140, 0.45);
-    border-radius: 26px;
-    padding: 40px 35px;
+    border-radius: 24px;
+    padding: 28px 20px;
     max-width: 760px;
     margin: 0 auto;
     box-shadow: 0 15px 40px rgba(0,0,0,0.5);
     backdrop-filter: blur(6px);
   }
-  .pergunta-numero { color: #ffd166; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-  .pergunta-texto { font-size: 1.75rem; font-weight: bold; margin-bottom: 28px; color: #fff; }
-  .opcoes-lista { display: flex; flex-direction: column; gap: 15px; }
+  .pergunta-numero { color: #ffd166; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .pergunta-texto { font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: bold; margin-bottom: 22px; color: #fff; }
+  .opcoes-lista { display: flex; flex-direction: column; gap: 12px; }
   .opcao-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.25);
     color: #fff;
-    padding: 18px 24px;
-    border-radius: 16px;
-    font-size: 1.25rem;
+    padding: 15px 18px;
+    border-radius: 14px;
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
     cursor: pointer;
     text-align: left;
     transition: all 0.2s;
   }
-  .opcao-btn:hover { background: rgba(255, 117, 140, 0.3); border-color: #ff758c; transform: translateX(6px); }
+  .opcao-btn:hover { background: rgba(255, 117, 140, 0.3); border-color: #ff758c; }
   .opcao-btn.correta { background: #2ec4b6; border-color: #2ec4b6; color: #0b2522; font-weight: bold; }
   .opcao-btn.errada { background: #e63946; border-color: #e63946; }
-  #feedback-quiz { margin-top: 20px; min-height: 28px; color: #ffd166; font-size: 1.2rem; }
+  #feedback-quiz { margin-top: 16px; min-height: 26px; color: #ffd166; font-size: 1.05rem; }
 
-  /* FASE 3: COFRE SECRETO + TECLADO VIRTUAL NA TELA */
+  /* FASE 3: COFRE SECRETO + TECLADO VIRTUAL RESPONSIVO */
   .card-cofre {
     background: linear-gradient(145deg, rgba(39,14,43,0.92), rgba(61,20,56,0.92));
     border: 2px solid #ffd166;
-    border-radius: 26px;
-    padding: 30px 30px;
+    border-radius: 24px;
+    padding: 24px 16px;
     max-width: 780px;
     margin: 0 auto;
     box-shadow: 0 15px 45px rgba(255, 209, 102, 0.25);
     backdrop-filter: blur(6px);
   }
-  .icone-cadeado { font-size: 3.4rem; margin-bottom: 6px; }
+  .icone-cadeado { font-size: 2.8rem; margin-bottom: 4px; }
   .dica-cofre {
     background: rgba(255, 209, 102, 0.12);
-    border-left: 5px solid #ffd166;
-    padding: 12px 18px;
+    border-left: 4px solid #ffd166;
+    padding: 10px 14px;
     border-radius: 10px;
-    margin: 14px 0;
+    margin: 12px 0;
     color: #ffe8a3;
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
   }
   .input-senha {
     width: 100%;
-    max-width: 360px;
+    max-width: 340px;
     padding: 12px;
     border-radius: 14px;
     border: 2px solid #ff758c;
@@ -281,104 +286,105 @@
     color: #ffd166;
     font-weight: bold;
     letter-spacing: 2px;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     text-align: center;
     margin-bottom: 14px;
     outline: none;
   }
   .input-senha:focus { border-color: #ffd166; }
 
-  /* Teclado Virtual para usar com o mouse na TV */
   .teclado-virtual {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 0 auto 18px auto;
-    max-width: 660px;
+    gap: 6px;
+    margin: 0 auto 16px auto;
+    width: 100%;
+    max-width: 640px;
   }
   .linha-teclado {
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
+    width: 100%;
   }
   .tecla-btn {
+    flex: 1;
+    max-width: 54px;
     background: rgba(255, 255, 255, 0.14);
     border: 1px solid rgba(255, 255, 255, 0.28);
     color: #fff;
-    font-size: 1.15rem;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
     font-weight: bold;
-    padding: 11px 15px;
-    min-width: 46px;
-    border-radius: 10px;
+    padding: 11px 4px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s;
   }
-  .tecla-btn:hover {
-    background: rgba(255, 117, 140, 0.45);
-    border-color: #ff758c;
-    transform: translateY(-2px);
-  }
-  .tecla-btn:active { transform: scale(0.95); }
+  .tecla-btn:hover { background: rgba(255, 117, 140, 0.45); border-color: #ff758c; }
+  .tecla-btn:active { transform: scale(0.93); }
   .tecla-acao {
+    flex: 1.6;
+    max-width: 95px;
     background: rgba(255, 209, 102, 0.2);
     border-color: #ffd166;
     color: #ffd166;
-    padding: 11px 18px;
+    font-size: 0.85rem;
   }
 
-  #erro-cofre { color: #ff758c; margin-top: 10px; min-height: 24px; font-size: 1.1rem; }
+  #erro-cofre { color: #ff758c; margin-top: 10px; min-height: 24px; font-size: 1rem; }
 
   /* BOTÕES E MODAIS */
   .btn-principal {
     background: linear-gradient(90deg, #ff758c, #ff5270);
     color: white;
     border: none;
-    padding: 15px 34px;
-    font-size: 1.15rem;
+    padding: 14px 28px;
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
     border-radius: 35px;
     cursor: pointer;
     font-weight: bold;
     box-shadow: 0 6px 20px rgba(255, 82, 112, 0.45);
     transition: transform 0.2s;
   }
-  .btn-principal:hover { transform: scale(1.05); }
+  .btn-principal:hover { transform: scale(1.04); }
 
   .overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(12, 4, 18, 0.92);
+    background: rgba(12, 4, 18, 0.94);
     z-index: 100;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 16px;
+    justify-content: flex-start;
+    padding: 20px 14px;
     backdrop-filter: blur(5px);
     overflow-y: auto;
   }
   .overlay.ativo { display: flex; }
+  .overlay::before, .overlay::after { content: ''; margin: auto; }
 
   /* MODAL DE ZOOM DA FOTO AO ACERTAR PAR */
   .card-zoom {
     background: linear-gradient(145deg, #2b102f, #46173e);
     border: 3px solid #ffd166;
-    border-radius: 26px;
-    padding: 24px;
-    max-width: 580px;
+    border-radius: 24px;
+    padding: 18px;
+    max-width: 540px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(255, 209, 102, 0.35);
     animation: zoomSuave 0.4s ease;
   }
   .card-zoom img {
     width: 100%;
-    max-height: 360px;
+    max-height: 320px;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 14px;
     border: 2px solid rgba(255, 255, 255, 0.4);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
   .card-zoom p {
-    font-size: 1.35rem;
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
     color: #ffe3e8;
     font-weight: bold;
   }
@@ -387,25 +393,25 @@
     position: relative;
     background: linear-gradient(145deg, #2b102f, #46173e);
     border: 2px solid #ff758c;
-    border-radius: 26px;
-    padding: 24px 26px;
+    border-radius: 24px;
+    padding: 22px 18px;
     max-width: 780px;
     width: 100%;
     box-shadow: 0 20px 50px rgba(255, 117, 140, 0.4);
     z-index: 102;
     animation: fadeIn 0.5s ease;
   }
-  .card-modal h2 { color: #ffd166; font-size: 1.85rem; margin-bottom: 8px; }
-  .card-modal p { font-size: 1.08rem; line-height: 1.5; color: #f8e8ee; margin-bottom: 12px; }
+  .card-modal h2 { color: #ffd166; font-size: clamp(1.45rem, 3.5vw, 1.85rem); margin-bottom: 8px; }
+  .card-modal p { font-size: clamp(0.98rem, 2.2vw, 1.08rem); line-height: 1.5; color: #f8e8ee; margin-bottom: 12px; }
 
   .selo-final-sintonia {
     display: inline-block;
     background: rgba(46, 196, 182, 0.2);
     border: 1px solid #2ec4b6;
     color: #7bf1e6;
-    padding: 4px 15px;
+    padding: 4px 14px;
     border-radius: 20px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: bold;
     margin-bottom: 12px;
   }
@@ -414,15 +420,14 @@
     width: 100%;
     max-height: 185px;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 14px;
     border: 3px solid #ffd166;
     margin-bottom: 12px;
   }
 
-  /* Texto da carta digitada ao vivo */
   #texto-carta-final {
     min-height: 64px;
-    font-size: 1.08rem;
+    font-size: clamp(0.98rem, 2.2vw, 1.08rem);
     line-height: 1.5;
     color: #ffe8f0;
     margin-bottom: 14px;
@@ -440,15 +445,15 @@
     background: rgba(255, 255, 255, 0.08);
     border: 2px dashed #ffd166;
     border-radius: 16px;
-    padding: 14px;
+    padding: 14px 12px;
     margin-bottom: 14px;
   }
   .voucher.visivel {
     opacity: 1;
     transform: translateY(0);
   }
-  .voucher span.tag-voucher { display: block; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 2px; color: #ffd166; margin-bottom: 4px; }
-  .voucher strong.titulo-voucher { font-size: 1.22rem; color: #fff; display: block; margin-bottom: 10px; }
+  .voucher span.tag-voucher { display: block; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd166; margin-bottom: 4px; }
+  .voucher strong.titulo-voucher { font-size: clamp(1.05rem, 2.5vw, 1.22rem); color: #fff; display: block; margin-bottom: 10px; }
 
   /* Grid dos 4 Restaurantes */
   .restaurantes-grid {
@@ -461,9 +466,9 @@
     background: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(255, 209, 102, 0.5);
     color: #fff;
-    padding: 11px 12px;
+    padding: 12px 10px;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
@@ -471,7 +476,6 @@
   .btn-restaurante:hover {
     background: rgba(255, 209, 102, 0.28);
     border-color: #ffd166;
-    transform: scale(1.03);
   }
   .btn-restaurante.escolhido {
     background: #2ec4b6;
@@ -482,7 +486,7 @@
 
   #confirmacao-restaurante {
     margin-top: 10px;
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: #7bf1e6;
     font-weight: bold;
   }
@@ -495,13 +499,13 @@
     border-top: 1px solid rgba(255, 255, 255, 0.18);
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 16px;
     animation: fadeIn 0.5s ease;
   }
   #box-whatsapp.ativo { display: flex; }
   #qr-zap {
-    width: 150px;
-    height: 150px;
+    width: 140px;
+    height: 140px;
     border-radius: 12px;
     border: 6px solid #fff;
     background: #fff;
@@ -512,7 +516,7 @@
     max-width: 400px;
   }
   .zap-info p {
-    font-size: 0.98rem !important;
+    font-size: 0.92rem !important;
     margin-bottom: 10px !important;
     color: #e0c3fc !important;
   }
@@ -522,15 +526,39 @@
     color: #092c16;
     font-weight: bold;
     text-decoration: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     border-radius: 22px;
-    font-size: 1rem;
+    font-size: 0.98rem;
     transition: transform 0.2s;
   }
-  .btn-zap:hover { transform: scale(1.05); }
+  .btn-zap:hover { transform: scale(1.04); }
 
-  /* Confetes atrás do modal para não cobrir o QR Code */
   #confetes { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+
+  /* ================= AJUSTES ESPECÍFICOS PARA CELULAR ================= */
+  @media (max-width: 640px) {
+    .tabuleiro {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .carta {
+      aspect-ratio: 1 / 1;
+    }
+    .restaurantes-grid {
+      grid-template-columns: 1fr;
+    }
+    #box-whatsapp {
+      flex-direction: column;
+      text-align: center;
+    }
+    .zap-info {
+      text-align: center;
+    }
+    /* No celular esconde o QR Code (pois ela já está no celular) e destaca o botão direto do WhatsApp */
+    #qr-zap, .texto-qr-tv {
+      display: none;
+    }
+  }
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(12px); }
@@ -555,7 +583,7 @@
   <!-- CANVAS DOS CORAÇÕES FLUTUANTES AO FUNDO -->
   <canvas id="coracoes-bg"></canvas>
 
-  <!-- ÁUDIO DE FUNDO (COLOQUE O ARQUIVO musica.mp3 NA MESMA PASTA) -->
+  <!-- ÁUDIO DE FUNDO -->
   <audio id="musica-fundo" loop>
     <source src="musica.mp3" type="audio/mpeg">
   </audio>
@@ -621,16 +649,16 @@
       </div>
     </div>
 
-    <!-- FASE 3: COFRE SECRETO + TECLADO NA TELA -->
+    <!-- FASE 3: COFRE SECRETO + TECLADO VIRTUAL -->
     <div class="fase-container" id="fase-3">
       <div class="card-cofre">
         <div class="icone-cadeado">🔐</div>
-        <h2 style="color: #ffd166; font-size: 1.9rem; margin-bottom: 6px;">Cofre dos 11 Anos</h2>
-        <p style="color: #e0c3fc; font-size: 1.1rem;">Use o teclado abaixo (ou o físico) para destrancar sua recompensa:</p>
+        <h2 style="color: #ffd166; font-size: clamp(1.4rem, 3vw, 1.9rem); margin-bottom: 6px;">Cofre dos 11 Anos</h2>
+        <p style="color: #e0c3fc; font-size: 1rem;">Use o teclado abaixo para destrancar sua recompensa:</p>
         
         <div class="dica-cofre" id="texto-dica-cofre"></div>
 
-        <input type="text" id="input-senha" class="input-senha" placeholder="SENHA..." onkeypress="if(event.key==='Enter') verificarCofre()">
+        <input type="text" id="input-senha" class="input-senha" placeholder="SENHA..." readonly>
         
         <div class="teclado-virtual" id="teclado-virtual"></div>
 
@@ -679,11 +707,11 @@
 
         <div id="confirmacao-restaurante"></div>
 
-        <!-- QR Code + Botão WhatsApp para avisar você na faculdade -->
+        <!-- QR Code (para TV) + Botão WhatsApp (direto no Celular) -->
         <div id="box-whatsapp">
           <img id="qr-zap" src="" alt="QR Code WhatsApp">
           <div class="zap-info">
-            <p>📱 Aponte a câmera do celular para o QR Code ao lado (ou clique no botão) para me avisar no WhatsApp:</p>
+            <p class="texto-qr-tv">📱 Aponte a câmera do celular para o QR Code ao lado (ou clique no botão) para me avisar no WhatsApp:</p>
             <a id="link-zap" href="#" target="_blank" class="btn-zap">📲 Enviar Escolha no WhatsApp</a>
           </div>
         </div>
@@ -743,7 +771,7 @@
   const CARTA_FINAL = '11 anos juntos e você continua gabaritando tudo sobre nós! Obrigado por ser minha parceira de vida, minha melhor amiga e o meu grande amor. Que essa seja apenas mais uma de muitas datas incríveis ao seu lado.';
 
 
-  // ---------------- BOTÃO DE TELA CHEIA (TV) ----------------
+  // ---------------- BOTÃO DE TELA CHEIA (TV / CELULAR) ----------------
   function alternarTelaCheia() {
     const btn = document.getElementById('btn-tela-cheia');
     if (!document.fullscreenElement) {
@@ -766,10 +794,10 @@
   function iniciarCoracoesFundo() {
     bgCanvas.width = window.innerWidth;
     bgCanvas.height = window.innerHeight;
-    coracoes = Array.from({ length: 28 }, () => ({
+    coracoes = Array.from({ length: 24 }, () => ({
       x: Math.random() * bgCanvas.width,
       y: Math.random() * bgCanvas.height,
-      size: Math.random() * 18 + 10,
+      size: Math.random() * 16 + 10,
       speed: Math.random() * 0.8 + 0.4,
       opacity: Math.random() * 0.25 + 0.08,
       drift: Math.random() * Math.PI * 2
@@ -899,7 +927,8 @@
       musicaTocando = true;
       btnSom.style.display = 'block';
     }).catch(() => {
-      btnSom.style.display = 'none';
+      btnSom.textContent = '🔇 Ligar Música';
+      btnSom.style.display = 'block';
     });
 
     document.getElementById('tela-capa').style.display = 'none';
@@ -914,9 +943,10 @@
       btnSom.textContent = '🔇 Música: Pausada';
       musicaTocando = false;
     } else {
-      musica.play();
-      btnSom.textContent = '🔊 Música: Ligada';
-      musicaTocando = true;
+      musica.play().then(() => {
+        btnSom.textContent = '🔊 Música: Ligada';
+        musicaTocando = true;
+      }).catch(() => {});
     }
   }
 
@@ -966,7 +996,7 @@
     timerZoom = setTimeout(() => {
       modalZoom.classList.remove('ativo');
       if (callbackFim) callbackFim();
-    }, 2300);
+    }, 2200);
   }
 
   function fecharZoom() {
@@ -1070,7 +1100,7 @@
     }
   }
 
-  // FASE 3: TECLADO VIRTUAL + VERIFICAÇÃO DO COFRE
+  // FASE 3: TECLADO VIRTUAL RESPONSIVO + SUPORTE A TECLADO FÍSICO NA TV
   function montarTecladoVirtual() {
     const linhas = [
       ['Q','W','E','R','T','Y','U','I','O','P'],
@@ -1105,6 +1135,18 @@
 
       container.appendChild(divLinha);
     });
+
+    // Permite digitar também pelo teclado físico quando estiver no PC/TV
+    document.addEventListener('keydown', (e) => {
+      if (!document.getElementById('fase-3').classList.contains('ativa')) return;
+      if (e.key === 'Enter') {
+        verificarCofre();
+      } else if (e.key === 'Backspace') {
+        input.value = input.value.slice(0, -1);
+      } else if (/^[a-zA-ZçÇ]$/.test(e.key)) {
+        input.value += e.key.toLowerCase();
+      }
+    });
   }
 
   function verificarCofre() {
@@ -1129,7 +1171,7 @@
     }
   }
 
-  // ESCOLHA DO RESTAURANTE NO VOUCHER FINAL + QR CODE WHATSAPP COM UNICODE SEGURO
+  // ESCOLHA DO RESTAURANTE NO VOUCHER FINAL + QR CODE (TV) + BOTÃO WHATSAPP (CELULAR)
   function escolherRestaurante(botaoClicado, nomeRestaurante) {
     tocarSom('vitoria');
     iniciarConfetes();
@@ -1139,7 +1181,6 @@
     document.getElementById('confirmacao-restaurante').textContent =
       `✅ Escolhido: ${nomeRestaurante}! Já vai se preparando que depois da faculdade eu te busco para a gente comemorar ❤️`;
 
-    // Emojis escritos em código Unicode seguro (nunca quebram no WhatsApp)
     const coracao = '\u2764\uFE0F';
     const tacas = '\uD83E\uDD42';
     const textoMensagem = `Amor, acabei de zerar a missão dos 11 anos! ${coracao} Escolhi o ${nomeRestaurante} para o nosso jantar hoje à noite ${tacas}`;
